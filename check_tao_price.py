@@ -7,6 +7,7 @@ from email.message import EmailMessage
 MAX_PURCHASE_PRICE=8.0
 GMAIL_APP_PASSWORD=""
 EMAIL=""
+DEBUG=False
 
 CARRIERS = {
     "att": "@mms.att.net",
@@ -46,8 +47,8 @@ def get_recycle_register_cost():
 
 
     #The search() function returns a Match object:
-    txt = "Insufficient balance ~D0.000000000 to register neuron. Current recycle is ~D13.275002128 TAO"
-    x = re.search(r"[\d\.]+ TAO", txt)
+    #txt = "Insufficient balance ~D0.000000000 to register neuron. Current recycle is ~D13.275002128 TAO"
+    x = re.search(r"[\d\.]+ TAO", output)
 
     #Get the digit from the match
     txt = x.group()
@@ -59,9 +60,13 @@ def get_recycle_register_cost():
 if __name__ == "__main__":
 
     current_price = get_recycle_register_cost()
-
+    if DEBUG:
+        print (f"current prices {current_price}")
+        
     if current_price < MAX_PURCHASE_PRICE:
-
+        if DEBUG:
+            print (f"current price:{current_pric} is less than max purchase price:{MAX_PURCAHSE_PRICE}")
+            
         text=f"recycle_register coset is {current_price} BUY BUY BUY!!!"
         subject= "BUY!! BUY!! BUY!!"
 
