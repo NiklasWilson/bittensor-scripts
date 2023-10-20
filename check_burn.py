@@ -51,10 +51,24 @@ def get_subnets_data():
 
     if output and output is not None:
         lines = output.strip().split("\n")
-        header = [x.strip() for x in lines[1].split()]
+
+        #Get the starting lines
+        header_line=0
+        data_line=0
+        for i, line in enumerate(lines):
+            if "Subnets" in line:
+                header_line=i+1
+                data_line=i+2
+                break
+        if header_line == 0 or data_line == 0:
+            raise Exception("couldn't determine header or data lines")
+
+        print (f"header_line: {header_line}, data_line: {data_line}")
+
+        header = [x.strip() for x in lines[header_line].split()]
         
         print (f"header: {header}")
-        for line in lines[2:-1]:
+        for line in lines[data_line:-1]:
             parts = re.split(r"\s+", line.strip())
 
             if len(parts)>2:
