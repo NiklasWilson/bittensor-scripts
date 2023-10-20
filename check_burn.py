@@ -47,27 +47,30 @@ def get_subnets_data():
         for line in lines[2:-1]:
             parts = re.split(r"\s+", line.strip())
 
-            if "K" in parts:
-                parts.remove("K")
+            if len(parts)>2:
+                print (f"parts: {parts}")
 
-            if "M" in parts:
-                parts.remove("M")
+                if "K" in parts:
+                    parts.remove("K")
 
-            if "T" in parts:
-                parts.remove("T")
+                if "M" in parts:
+                    parts.remove("M")
 
-            # print (f"parts:{parts}")
-            subnet_info = {
-                header[0]: parts[0],
-                header[1]: int(parts[1]),
-                header[2]: parts[2],
-                header[3]: parts[3],
-                header[4]: parts[4],
-                header[5]: float(parts[5][1:]),  # Remove 'τ' and convert to float
-                header[6]: parts[6],
-                header[7]: parts[7],
-            }
-            subnet_data.append(subnet_info)
+                if "T" in parts:
+                    parts.remove("T")
+
+                # print (f"parts:{parts}")
+                subnet_info = {
+                    header[0]: int(parts[0]),
+                    header[1]: parts[1],
+                    header[2]: parts[2],
+                    header[3]: parts[3],
+                    header[4]: parts[4],
+                    header[5]: float(parts[5][1:]),  # Remove 'τ' and convert to float
+                    header[6]: parts[6],
+                    header[7]: parts[7],
+                }
+                subnet_data.append(subnet_info)
     return subnet_data
 
 
@@ -80,6 +83,7 @@ if __name__ == "__main__":
 
         if subnets_data:
             for item in subnets_data:
+                print (f"item: {item}")
                 if item["NETUID"] == 5:
                     print (f"item_burn: {item['BURN']}")
                     if item["BURN"] < BURN_THRESHOLD:
