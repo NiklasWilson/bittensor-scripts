@@ -58,7 +58,7 @@ def get_subnets_data():
 
             # print (f"parts:{parts}")
             subnet_info = {
-                header[0]: int(parts[0]),
+                header[0]: parts[0],
                 header[1]: int(parts[1]),
                 header[2]: parts[2],
                 header[3]: parts[3],
