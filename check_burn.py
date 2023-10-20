@@ -61,7 +61,7 @@ def get_subnets_data():
 
                 # print (f"parts:{parts}")
                 subnet_info = {
-                    header[0]: int(parts[0]),
+                    header[0]: parts[0],
                     header[1]: parts[1],
                     header[2]: parts[2],
                     header[3]: parts[3],
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         if subnets_data:
             for item in subnets_data:
                 print (f"item: {item}")
-                if item["NETUID"] == 5:
+                if int(item["NETUID"]) == 5:
                     print (f"item_burn: {item['BURN']}")
                     if item["BURN"] < BURN_THRESHOLD:
                         # Get the current time again
