@@ -7,6 +7,15 @@ import datetime
 
 BURN_THRESHOLD = 13
 
+def is_integer(n):
+    try:
+        # Attempt to convert the string to an integer
+        int(n)
+        return True
+    except ValueError:
+        # If a ValueError is raised, the conversion failed, meaning the string is not an integer
+        return False
+    
 def get_subnets_data():
     command = "btcli s list"
 
@@ -61,7 +70,7 @@ def get_subnets_data():
 
                 print (f"parts:{parts}")
 
-                if len(parts)>3:
+                if len(parts)>3 and is_integer(parts[0]):
                     subnet_info = {
                         header[0]: int(parts[0]),
                         header[1]: parts[1],
