@@ -59,7 +59,7 @@ def get_subnets_data():
                 if "T" in parts:
                     parts.remove("T")
 
-                # print (f"parts:{parts}")
+                print (f"parts:{parts}")
                 subnet_info = {
                     header[0]: parts[0],
                     header[1]: parts[1],
