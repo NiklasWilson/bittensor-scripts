@@ -7,6 +7,7 @@ import datetime
 
 BURN_THRESHOLD = 13
 
+
 def is_integer(n):
     try:
         # Attempt to convert the string to an integer
@@ -15,7 +16,8 @@ def is_integer(n):
     except ValueError:
         # If a ValueError is raised, the conversion failed, meaning the string is not an integer
         return False
-    
+
+
 def get_subnets_data():
     command = "btcli s list"
 
@@ -52,28 +54,23 @@ def get_subnets_data():
     if output and output is not None:
         lines = output.strip().split("\n")
 
-        #Get the starting lines
-        header_line=0
-        data_line=0
+        # Get the starting lines
+        header_line = 0
+        data_line = 0
         for i, line in enumerate(lines):
             if "Subnets" in line:
-                header_line=i+1
-                data_line=i+2
+                header_line = i + 1
+                data_line = i + 2
                 break
         if header_line == 0 or data_line == 0:
             raise Exception("couldn't determine header or data lines")
 
-        print (f"header_line: {header_line}, data_line: {data_line}")
-
         header = [x.strip() for x in lines[header_line].split()]
-        
-        print (f"header: {header}")
+
         for line in lines[data_line:-1]:
             parts = re.split(r"\s+", line.strip())
 
-            if len(parts)>2:
-                print (f"parts: {parts}")
-
+            if len(parts) > 2:
                 if "K" in parts:
                     parts.remove("K")
 
@@ -83,27 +80,16 @@ def get_subnets_data():
                 if "T" in parts:
                     parts.remove("T")
 
-                print (f"parts:{parts}")
-
-                if len(parts)>3 and is_integer(parts[0]):
-                    print (f"0: {header[0]} {parts[0]}")
-                    print (f"{header[1]}")
-                    print (f"{parts[1]}")
-                    print (f"1: {header[1]} {parts[1]}")
-                    print (f"2: {header[2]} {parts[2]}")
-                    print (f"3: {header[3]} {parts[3]}")
-                    print (f"4: {header[4]} {parts[4]}")
-                    print (f"5: {header[5]} {parts[5]}")
-                    print (f"6: {header[6]} {parts[6]}")
-                    print (f"7: {header[7]} {parts[7]}")
-
+                if len(parts) > 3 and is_integer(parts[0]):
                     subnet_info = {
                         header[0]: int(parts[0]),
                         header[1]: parts[1],
                         header[2]: parts[2],
                         header[3]: parts[3],
                         header[4]: parts[4],
-                        header[5]: float(parts[5][1:]),  # Remove 'τ' and convert to float
+                        header[5]: float(
+                            parts[5][1:]
+                        ),  # Remove 'τ' and convert to float
                         header[6]: parts[6],
                         header[7]: parts[7],
                     }
@@ -120,9 +106,8 @@ if __name__ == "__main__":
 
         if subnets_data:
             for item in subnets_data:
-                print (f"item: {item}")
                 if item["NETUID"] == 5:
-                    print (f"item_burn: {item['BURN']}")
+                    print(f"item_burn: {item['BURN']}")
                     if item["BURN"] < BURN_THRESHOLD:
                         # Get the current time again
                         current_time = datetime.datetime.now()
