@@ -5,11 +5,13 @@ MODEL="dataset_wikitext_tuned"
 NETWORK="nobunaga"
 AXON_PORT=8901
 
+wallet_name = $1
+
 btcli run \
         --cuda \
         --cuda.TPB 512 \
         --cuda.update_interval 70_000 \
-        --wallet.name MassedCompute \
+        --wallet.name $wallet_name \
         --cuda.dev_id $DEV_ID \
         --logging.trace \
         --logging.record_log bt.log \

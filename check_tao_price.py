@@ -4,7 +4,7 @@ import smtplib
 import sys
 from email.message import EmailMessage
 
-MAX_PURCHASE_PRICE=8.0
+MAX_PURCAHSE_PRICE=8.0
 GMAIL_APP_PASSWORD=""
 EMAIL=""
 DEBUG=False
@@ -55,7 +55,7 @@ def get_recycle_register_cost():
     x = re.search(r"\d+.\d+", txt)
     current_price = float(x.group())
     
-   return current_price
+    return current_price
 
 if __name__ == "__main__":
 
@@ -63,16 +63,16 @@ if __name__ == "__main__":
     if DEBUG:
         print (f"current prices {current_price}")
         
-    if current_price < MAX_PURCHASE_PRICE:
+    if current_price < MAX_PURCAHSE_PRICE:
         if DEBUG:
-            print (f"current price:{current_pric} is less than max purchase price:{MAX_PURCAHSE_PRICE}")
+            print (f"current price:{current_price} is less than max purchase price:{MAX_PURCAHSE_PRICE}")
             
         text=f"recycle_register coset is {current_price} BUY BUY BUY!!!"
         subject= "BUY!! BUY!! BUY!!"
 
         message = f'Subject: {subject}\n\n{text}'
 
-        #phone_number="3162101178"
+        #phone_number="XXXXXX"
         #carrier="tmobile"
 
         email=""

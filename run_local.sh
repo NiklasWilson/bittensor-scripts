@@ -1,10 +1,12 @@
 #!/bin/bash
+wallet_name = $1
+
 btcli run \
         --cuda \
         --cuda.TPB 512 \
         --cuda.update_interval 80_000 \
         --subtensor.network local \
-        --wallet.name MassedCompute \
+        --wallet.name $wallet_name \
         --wallet.hotkey miner1 \
         --cuda.dev_id 0 1 2 3 4 5 6 7 \
         --subtensor.chain_endpoint 10.10.10.189:9944 \

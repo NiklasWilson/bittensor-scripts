@@ -5,11 +5,13 @@ MODEL="mountain_w_openwebtext"
 NETWORK="nobunaga"
 AXON_PORT=8902
 
+wallet_name = $1
+
 btcli run \
         --cuda \
         --cuda.TPB 512 \
         --cuda.update_interval 70_000 \
-        --wallet.name MassedCompute \
+        --wallet.name $wallet_name \
         --cuda.dev_id $DEV_ID \
         --logging.trace \
         --logging.record_log bt.log \
@@ -29,7 +31,6 @@ btcli run \
 
         #--subtensor.network local \      
         #--no_prompt \
-        #--subtensor.chain_endpoint 207.178.107.92:9944 \
         #--subtensor.chain_endpoint 10.10.10.189:9944 \
         #Model from https://huggingface.co/models?sort=likes
         # --neuron.model_name runwayml/stable-diffusion-v1-5
