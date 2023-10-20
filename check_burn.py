@@ -60,17 +60,19 @@ def get_subnets_data():
                     parts.remove("T")
 
                 print (f"parts:{parts}")
-                subnet_info = {
-                    header[0]: parts[0],
-                    header[1]: parts[1],
-                    header[2]: parts[2],
-                    header[3]: parts[3],
-                    header[4]: parts[4],
-                    header[5]: float(parts[5][1:]),  # Remove 'τ' and convert to float
-                    header[6]: parts[6],
-                    header[7]: parts[7],
-                }
-                subnet_data.append(subnet_info)
+
+                if len(parts)>3:
+                    subnet_info = {
+                        header[0]: int(parts[0]),
+                        header[1]: parts[1],
+                        header[2]: parts[2],
+                        header[3]: parts[3],
+                        header[4]: parts[4],
+                        header[5]: float(parts[5][1:]),  # Remove 'τ' and convert to float
+                        header[6]: parts[6],
+                        header[7]: parts[7],
+                    }
+                    subnet_data.append(subnet_info)
     return subnet_data
 
 
@@ -84,7 +86,7 @@ if __name__ == "__main__":
         if subnets_data:
             for item in subnets_data:
                 print (f"item: {item}")
-                if int(item["NETUID"]) == 5:
+                if item["NETUID"] == 5:
                     print (f"item_burn: {item['BURN']}")
                     if item["BURN"] < BURN_THRESHOLD:
                         # Get the current time again
