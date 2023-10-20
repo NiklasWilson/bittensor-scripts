@@ -71,6 +71,15 @@ def get_subnets_data():
                 print (f"parts:{parts}")
 
                 if len(parts)>3 and is_integer(parts[0]):
+                    print (f"0: {parts[0]}")
+                    print (f"1: {parts[1]}")
+                    print (f"2: {parts[2]}")
+                    print (f"3: {parts[3]}")
+                    print (f"4: {parts[4]}")
+                    print (f"5: {parts[5]}")
+                    print (f"6: {parts[6]}")
+                    print (f"7: {parts[7]}")
+
                     subnet_info = {
                         header[0]: int(parts[0]),
                         header[1]: parts[1],
