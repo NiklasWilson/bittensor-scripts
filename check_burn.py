@@ -52,7 +52,8 @@ def get_subnets_data():
     if output and output is not None:
         lines = output.strip().split("\n")
         header = [x.strip() for x in lines[1].split()]
-
+        
+        print (f"header: {header}")
         for line in lines[2:-1]:
             parts = re.split(r"\s+", line.strip())
 
