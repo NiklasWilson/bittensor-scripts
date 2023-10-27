@@ -15,7 +15,6 @@ load_dotenv()
 WALLET_NAME = os.getenv("WALLET_NAME")
 RANK_THRESHOLD = 0.00350
 
-
 def is_integer(n):
     try:
         # Attempt to convert the string to an integer
@@ -117,12 +116,13 @@ if __name__ == "__main__":
 
         if wallet_data:
             for item in wallet_data:
+                print (f"Comparing rank: {item['RANK']} to threshold {RANK_THRESHOLD} ")
                 if float(item["RANK"]) < RANK_THRESHOLD:
                     # Get the current time again
                     current_time = datetime.datetime.now()
 
                     subject = "LOW RANK Alert"
-                    body = f"RANK for {item['HOTKEY']} Is below {RANK_THRESHOLD}"
+                    body = f"RANK for {item['HOTKEY']} Is at {item['RANK']} below {RANK_THRESHOLD}"
 
                     if stored_time is not None:
                         time_difference = current_time - stored_time
@@ -140,6 +140,8 @@ if __name__ == "__main__":
                         # update the stored time
                         stored_time = current_time
 
+        #TODO: Account for error "Error: {'code': -32000, 'message': 'Client error: Execution failed: failed to instantiate a new WASM module instance: maximum concurrent instance limit of 32 reached'}"
+        
 
         # if subnets_data:
         #     for item in subnets_data:

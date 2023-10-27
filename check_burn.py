@@ -98,46 +98,32 @@ def get_subnets_data():
 
 
 if __name__ == "__main__":
-    # Get the current time
-    stored_time = None
+    # Create a datetime object for January 1, 1970, 00:00:00
+    stored_time = datetime.datetime(1970, 1, 1, 0, 0, 0)
+
+    #netuids to watch
+    netuids=[4,5]
 
     while True:
         subnets_data = get_subnets_data()
 
         if subnets_data:
             for item in subnets_data:
-                if item["NETUID"] == 5:
-                    print(f"item_burn: {item['BURN']}")
+                if item["NETUID"] in netuids:
+                    print(f"NETUID: {item['NETUID']} item_burn: {item['BURN']}")
                     if item["BURN"] < BURN_THRESHOLD:
                         # Get the current time again
                         current_time = datetime.datetime.now()
 
-                        if stored_time is not None:
-                            time_difference = current_time - stored_time
-                            # Check if the time difference is at least 5 minutes
-                            if (
-                                time_difference.total_seconds() >= 15 * 60
-                            ):  # 5 minutes in seconds
-                                subject = "Bittensor Burn Alert"
-                                body = f"Burn rate on NetUD 5 is {item['BURN']}"
-                                utils.send_email(subject, body)
-
-                                # update the stored time
-                                stored_time = current_time
-                        else:  # first time through
+                        time_difference = current_time - stored_time
+                        # Check if the time difference is at least 5 minutes
+                        if (
+                            time_difference.total_seconds() >= 15 * 60
+                        ):  # 5 minutes in seconds
                             subject = "Bittensor Burn Alert"
-                            body = f"Burn rate on NetUD 5 is {item['BURN']}"
+                            body = f"Burn rate on NetUD 4 is {item['BURN']}"
                             utils.send_email(subject, body)
 
                             # update the stored time
                             stored_time = current_time
-
-        # time.sleep (60)
-
-        # print (f"Burn on netuid 5 is < 16")
-
-    # Convert the data to JSON
-    # subnet_json = json.dumps(subnet_data, indent=2)
-
-    # Print the JSON data
-    # print(subnet_json)
+                        
