@@ -4,6 +4,7 @@ import sys
 import argparse
 import os
 from dotenv import load_dotenv
+import utils
 
 # Load the environment variables from the .env file
 load_dotenv()
@@ -72,6 +73,10 @@ def recycle_register(wallet_name, threshold, hotkey,netuid):
 
     if recycle_cost is not None and recycle_cost < threshold:
         child.sendline("y")
+        subject = "Token Purchased"
+        body = f"NetUID: {netuid}, hotkey: {hotkey}, recycle_cost: {recycle_cost}"
+
+        utils.send_email(subject, body)
     else:
         print (f"recycle_cost: {recycle_cost} > threshold {threshold}")
         child.sendline("n")
