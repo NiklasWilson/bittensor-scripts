@@ -10,7 +10,7 @@ load_dotenv()
 
 WALLET_NAME = os.getenv("WALLET_NAME")
 WALLET_PASSWORD = os.getenv("WALLET_PASSWORD")
-THRESHOLD=10.0
+
 
 # Function to safely convert string to float
 def safe_float(s):
@@ -95,6 +95,7 @@ if __name__ == "__main__":
 
     # Add arguments to the parser
     parser.add_argument('--netuid', type=int, required=True, help='An integer representing the NetUID.')
+    parser.add_argument('--threshold', type=float, required=True, help='A string representing the wallet name.')
     parser.add_argument('--hotkey', type=str, required=True, help='A string representing the wallet name.')
 
     # Parse the arguments from the command line
@@ -102,9 +103,10 @@ if __name__ == "__main__":
 
     hotkey=args.hotkey
     netuid=args.netuid
+    threshold=args.threshold
     
     while True:
         try:
-            recycle_register(WALLET_NAME, THRESHOLD, hotkey,netuid)
+            recycle_register(WALLET_NAME, threshold, hotkey, netuid)
         except Exception as e:
             print (f"Exception trying to register {hotkey} on netuid: {netuid} - {str(e)}")
