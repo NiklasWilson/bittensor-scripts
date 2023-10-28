@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 WALLET_NAME = os.getenv("WALLET_NAME")
+WALLET_PASSWORD = os.getenv("WALLET_PASSWORD")
 THRESHOLD=10.0
 
 # Function to safely convert string to float
@@ -24,7 +25,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 def recycle_register(wallet_name, threshold, hotkey,netuid):
     # Command to run
-    command = f'/Users/stevenmckay/miniconda3/envs/bittensor/bin/btcli s recycle_register --wallet.name {wallet_name} --wallet.hotkey {hotkey} --netuid {netuid} --subtensor.network finney'
+    command = f'btcli s recycle_register --wallet.name {wallet_name} --wallet.hotkey {hotkey} --netuid {netuid} --subtensor.network finney'
 
     # Start the process
     child = pexpect.spawn(command)
@@ -59,7 +60,7 @@ def recycle_register(wallet_name, threshold, hotkey,netuid):
 
     # # Expecting password prompt
     child.expect(r"Enter password to unlock key.*", timeout=120)
-    child.sendline("dqxgFUQA0ZqxBVt")  # Sending password
+    child.sendline(WALLET_PASSWORD)  # Sending password
 
     # # Expect recycle confirmation with cost
     recycle_regex = r"Recycle .*(\d+\.\d+) to register on subnet:.*"
