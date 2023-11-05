@@ -5,6 +5,7 @@ import argparse
 import os
 from dotenv import load_dotenv
 import utils
+import random
 
 # Load the environment variables from the .env file
 load_dotenv()
@@ -93,6 +94,15 @@ def recycle_register(wallet_name, threshold, hotkey,netuid):
     child.close()
     return
 
+def generate_random_miner(netuid):
+    # Generate a random number between 0 and 99
+    number = random.randint(0, 99)
+
+    # Format the number to be three digits long, padding with leading zeros if necessary
+    padded_number = "{:02}".format(number)
+
+    return f"miner{netuid}{padded_number}"
+
 if __name__ == "__main__":
 
     # Create an ArgumentParser object
@@ -101,7 +111,7 @@ if __name__ == "__main__":
     # Add arguments to the parser
     parser.add_argument('--netuid', type=int, required=True, help='An integer representing the NetUID.')
     parser.add_argument('--threshold', type=float, required=True, help='A string representing the wallet name.')
-    parser.add_argument('--hotkey', type=str, required=True, help='A string representing the wallet name.')
+    parser.add_argument('--hotkey', type=str, required=False, help='A string representing the wallet name.')
 
     # Parse the arguments from the command line
     args = parser.parse_args()
@@ -109,8 +119,10 @@ if __name__ == "__main__":
     hotkey=args.hotkey
     netuid=args.netuid
     threshold=args.threshold
-    
+
     while True:
+        if not args.hotkey:
+            hotkey = generate_random_miner(netuid)
         try:
             recycle_register(WALLET_NAME, threshold, hotkey, netuid)
         except Exception as e:
