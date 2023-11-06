@@ -26,7 +26,7 @@ def is_integer(n):
 
 
 def get_wallet_data():
-    command = f"btcli wallet overview --wallet.name {WALLET_NAME}"
+    command = f"btcli w overview --wallet.name {WALLET_NAME}"
 
     output = None
 

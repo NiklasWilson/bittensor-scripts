@@ -27,7 +27,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 def recycle_register(wallet_name, threshold, hotkey,netuid):
     # Command to run
-    command = f'btcli s recycle_register --wallet.name {wallet_name} --wallet.hotkey {hotkey} --netuid {netuid} --subtensor.network finney'
+    command = f'btcli s register --wallet.name {wallet_name} --wallet.hotkey {hotkey} --netuid {netuid} --subtensor.network finney'
 
     # Start the process
     child = pexpect.spawn(command)
