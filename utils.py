@@ -32,6 +32,7 @@ unstake_token_command = Template(
     f"btcli stake remove --wallet.name {WALLET_NAME} --wallet.hotkey $wallet_hotkey --max_stake 1 --subtensor.network local --subtensor.chain_endpoint {SUBTENSOR_ENDPOINT}"
 )
 
+
 def send_email(subject: str, body: str) -> bool:
     """
     Sends an email with the given subject and body.
@@ -97,8 +98,8 @@ def get_wallet() -> dict | None:
         output = subprocess.check_output(
             command, shell=True, stderr=subprocess.STDOUT, universal_newlines=True
         )
-        print("Output:")
-        print(output)
+        # print("Output:")
+        # print(output)
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")
 
@@ -119,7 +120,7 @@ def get_wallet() -> dict | None:
             if "T" in parts:
                 parts.remove("T")
 
-        print(f"{parts=}")
+        # print(f"{parts=}")
 
         # subnet section - get the subnet number
         if parts[0] == "Subnet:":
@@ -160,7 +161,7 @@ def get_wallet() -> dict | None:
 
         # final stake line
         if len(parts) == 11:
-            print(f"stake line {parts=}")
+            # print(f"stake line {parts=}")
             wallet["staked_tao"] = float(
                 parts[3][1:]
             )  # remove the first character from the tao
@@ -171,7 +172,7 @@ def get_wallet() -> dict | None:
                 parts[2][1:]
             )  # remove the first character from the tao
 
-    print(f"{json.dumps(wallet)}")
+    # print(f"{json.dumps(wallet)}")
     return wallet
 
 
@@ -219,7 +220,7 @@ def unstake_tokens(wallet_hotkey: str) -> bool:
 
         # Wait for the command to finish and print the output
         child.expect(pexpect.EOF)
-        print(child.before.decode())
+        # print(child.before.decode())
 
     except Exception as e:
         print(f"Error unstaking tokens: {e}")
@@ -233,16 +234,19 @@ def unstake_tokens(wallet_hotkey: str) -> bool:
 
 
 def generate_html(data, staked_tao, wallet_balance):
-    html = "<html>\n"
+    html = "<!doctype html>\n<html>\n"
     html += """
     <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <style>
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     </head>
     """
     html += "<body>\n"
-    html += """<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>"""
+    html += """
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    """
     subnet = None
     first_table = True
     html += "<table table-striped table-hover>\n"
@@ -267,11 +271,14 @@ def generate_html(data, staked_tao, wallet_balance):
                 subnet = item[key]
                 html += """<table class="table table-striped table-hover">"""
 
+                html += """<thead class="thead-dark">\n"""
                 html += "<tr>\n"
                 for hkey in data[0].keys():
                     # print(f"{hkey=}")
-                    html += f"<th>{hkey}</th>\n"
+                    html += f"""<th scope="col">{hkey}</th>\n"""
                 html += "</tr>\n"
+                html += "</thead>\n"
+
                 html += """<tbody class="table-group-divider">"""
             # print(f"{item[key]=}")
             html += f"<td>{item[key]}</td>\n"
@@ -283,10 +290,16 @@ def generate_html(data, staked_tao, wallet_balance):
     html += "<table>\n"
     html += "<tr>\n"
     html += f"<td>Staked Tao:</td><td>{staked_tao}</td>\n"
+    html += "</tr>\n"
+    html += "<tr>\n"
     html += f"<td>Wallet Balance:</td><td>{wallet_balance}</td>\n"
     html += "</tr>\n"
     html += "</table>\n"
+    now = datetime.datetime.now()
+    dt_string = now.strftime("%Y/%m/%d %H:%M:%S")
 
+    html += "<p>&nbsp;</p>"
+    html += f"""<p class="font-italic">last updated: {dt_string}</p>"""
     html += "</body>\n</html>"
 
     return html
