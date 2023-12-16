@@ -6,6 +6,7 @@ import datetime
 import os
 import json
 import subprocess
+import subprocess
 
 # import subprocess
 import pexpect
@@ -303,3 +304,50 @@ def generate_html(data, staked_tao, wallet_balance):
     html += "</body>\n</html>"
 
     return html
+
+def generate_keys(wallet:str, netuid: int):
+    """
+    Prints the iteration numbers from 00 to 99, each prepended by the given netuid.
+    Each iteration number is zero-padded to ensure it is always two characters.
+    
+    :param netuid: The netuid to prepend to each iteration number.
+    """
+    for i in range(100):
+        # Format the iteration number with zero-padding to two digits and prepend the netuid
+        command = f"btcli w new_hotkey --wallet.name {WALLET_NAME} --wallet.hotkey miner{netuid}{i:02d}"
+        print(f"registering: mminer{netuid}{i:02d}, command: {command}")
+        try:
+            output = subprocess.check_output(
+                command, shell=True, stderr=subprocess.STDOUT, universal_newlines=True
+            )
+            print("Output:")
+            print(output)
+        except subprocess.CalledProcessError as e:
+            print(f"Error: {e}")
+        
+
+
+# # get wallet into json
+# wallet = Utils.get_wallet()
+
+# # for each miner, unstake any amount over 1
+# # # iterate over wallet for each hotkey
+# # for miner in wallet['miners']:
+# #     # If the hotkey is a miner unstake
+# #     if miner['VTRUST']==0.0 and miner['STAKE'] > 1:
+# #         Utils.unstake_tokens(miner['HOTKEY'])
+
+# # Sort the list of dictionaries by the age value
+# sorted_wallet = sorted(wallet["miners"], key=lambda x: x["SUBNET"])
+
+# # Generate HTML
+# html_content = Utils.generate_html(
+#     sorted_wallet,
+#     wallet_balance=wallet["wallet_balance"],
+#     staked_tao=wallet["staked_tao"],
+# )
+
+# # print(html_content)
+# # # Write HTML to a file
+# with open("output.html", "w") as file:
+#     file.write(html_content)
