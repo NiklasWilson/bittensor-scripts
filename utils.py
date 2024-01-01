@@ -27,10 +27,13 @@ email_password = os.getenv("EMAIL_PASSWORD")
 WALLET_NAME = os.getenv("WALLET_NAME")
 WALLET_PASSWORD = os.getenv("WALLET_PASSWORD")
 SUBTENSOR_ENDPOINT = "ws://209.137.198.70:9944"  # TOOD: Move to .env
+MAX_STAKE = os.getenv("MAX_STAKE")
 
 wallet_overview_command = Template(f"btcli wallet overview --wallet.name {WALLET_NAME}  --subtensor.network local --subtensor.chain_endpoint {SUBTENSOR_ENDPOINT}")
+
+
 unstake_token_command = Template(
-    f"btcli stake remove --wallet.name {WALLET_NAME} --wallet.hotkey $wallet_hotkey --max_stake 1 --subtensor.network local --subtensor.chain_endpoint {SUBTENSOR_ENDPOINT}"
+    f"btcli stake remove --wallet.name {WALLET_NAME} --wallet.hotkey $wallet_hotkey --max_stake {MAX_STAKE} --subtensor.network local --subtensor.chain_endpoint {SUBTENSOR_ENDPOINT}"
 )
 
 
