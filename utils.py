@@ -28,7 +28,7 @@ WALLET_NAME = os.getenv("WALLET_NAME")
 WALLET_PASSWORD = os.getenv("WALLET_PASSWORD")
 SUBTENSOR_ENDPOINT = "ws://209.137.198.70:9944"  # TOOD: Move to .env
 
-wallet_overview_command = Template(f"btcli wallet overview --wallet.name {WALLET_NAME}")
+wallet_overview_command = Template(f"btcli wallet overview --wallet.name {WALLET_NAME}  --subtensor.network local --subtensor.chain_endpoint {SUBTENSOR_ENDPOINT}")
 unstake_token_command = Template(
     f"btcli stake remove --wallet.name {WALLET_NAME} --wallet.hotkey $wallet_hotkey --max_stake 1 --subtensor.network local --subtensor.chain_endpoint {SUBTENSOR_ENDPOINT}"
 )
@@ -91,8 +91,11 @@ def get_wallet() -> dict | None:
         >>> wallet = utils.get_wallet("MyWallet", "password")
     """
 
-    command = f"stty cols 180 && btcli w overview --wallet.name {WALLET_NAME}"
+    #command = f"stty cols 180 && btcli w overview --wallet.name {WALLET_NAME} "
 
+    command = wallet_overview_command.substitute(WALLET_NAME=WALLET_NAME, SUBTENSOR_ENDPOINT=SUBTENSOR_ENDPOINT)
+    print (f"{command=}")
+    
     wallet = {"miners": []}
 
     try:
