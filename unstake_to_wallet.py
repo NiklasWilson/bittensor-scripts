@@ -2,7 +2,7 @@ import os
 import utils
 import json
 
-MAX_STAKE = os.getenv("MAX_STAKE") or 1.0
+MAX_STAKE = float(os.getenv("MAX_STAKE")) or 1.0
 STAKE_LEFT = True
 
 # get wallet into json
