@@ -1,18 +1,44 @@
-import pexpect
-import sys
-import argparse
 import os
-from dotenv import load_dotenv
 import utils
+import json
 
-MAX_STAKE = os.getenv("MAX_STAKE")
+MAX_STAKE = os.getenv("MAX_STAKE") or 1.0
+STAKE_LEFT = True
 
 # get wallet into json
 wallet = utils.get_wallet()
 
-# for each miner, unstake any amount over 1
-# iterate over wallet for each hotkey
-for miner in wallet['miners']:
-    # If the hotkey is a miner unstake
-    if miner['VTRUST']==0.0 and miner['STAKE'] > MAX_STAKE:
-        utils.unstake_tokens(miner['HOTKEY'])
+print(json.dumps(wallet, indent=2))
+
+initial_amount_staked = wallet["staked_tao"]
+initial_wallet_balance = wallet["wallet_balance"]
+
+final_amount_staked = 0.0
+final_wallet_balanace = 0.0
+
+while STAKE_LEFT:
+    STAKE_LEFT = False
+
+    # for each miner, unstake any amount over MAX_STAKE
+    # iterate over wallet for each hotkey
+    for miner in wallet["miners"]:
+        # If the hotkey is a miner unstake
+        if miner["VTRUST"] == 0.0 and miner["STAKE"] > MAX_STAKE:
+            utils.unstake_tokens(miner["HOTKEY"])
+            STAKE_LEFT = True
+
+    wallet = utils.get_wallet()
+
+final_amount_staked = wallet["staked_tao"]
+final_wallet_balance = wallet["wallet_balance"]
+
+print(
+    f"{initial_amount_staked=}, {initial_wallet_balance=}, {final_amount_staked=}, {final_wallet_balanace=}"
+)
+print(f"amount staked delta={initial_amount_staked-final_amount_staked}")
+print(f"wallet_balance delta={final_wallet_balanace-initial_wallet_balance}")
+
+tao_earned = (final_wallet_balanace + final_amount_staked) - (
+    initial_amount_staked + initial_wallet_balance
+)
+print(f"tao_earned = {tao_earned}")

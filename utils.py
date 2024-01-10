@@ -26,7 +26,7 @@ email_recipients = json.loads(os.getenv("EMAIL_RECIPIENTS"))
 email_password = os.getenv("EMAIL_PASSWORD")
 WALLET_NAME = os.getenv("WALLET_NAME")
 WALLET_PASSWORD = os.getenv("WALLET_PASSWORD")
-SUBTENSOR_ENDPOINT = "ws://209.137.198.70:9944"  # TOOD: Move to .env
+SUBTENSOR_ENDPOINT = os.getenv("SUBTENSOR_ENDPOINT")
 MAX_STAKE = os.getenv("MAX_STAKE")
 
 wallet_overview_command = Template(f"btcli wallet overview --wallet.name {WALLET_NAME}  --subtensor.network local --subtensor.chain_endpoint {SUBTENSOR_ENDPOINT}")
