@@ -96,7 +96,7 @@ def get_wallet() -> dict | None:
 
     #command = f"stty cols 180 && btcli w overview --wallet.name {WALLET_NAME} "
 
-    command = wallet_overview_command.substitute(WALLET_NAME=WALLET_NAME, SUBTENSOR_ENDPOINT=SUBTENSOR_ENDPOINT)
+    command = wallet_overview_command.substitute(WALLET_NAME=WALLET_NAME)
     print (f"{command=}")
     
     wallet = {"miners": []}
