@@ -26,14 +26,14 @@ email_recipients = json.loads(os.getenv("EMAIL_RECIPIENTS"))
 email_password = os.getenv("EMAIL_PASSWORD")
 WALLET_NAME = os.getenv("WALLET_NAME")
 WALLET_PASSWORD = os.getenv("WALLET_PASSWORD")
-SUBTENSOR_ENDPOINT = os.getenv("SUBTENSOR_ENDPOINT")
-MAX_STAKE = os.getenv("MAX_STAKE")
+#SUBTENSOR_ENDPOINT = os.getenv("SUBTENSOR_ENDPOINT")
+MAX_STAKE = os.getenv("MAX_STAKE") or 1.0
 
-wallet_overview_command = Template(f"btcli wallet overview --wallet.name {WALLET_NAME}  --subtensor.network local --subtensor.chain_endpoint {SUBTENSOR_ENDPOINT}")
+wallet_overview_command = Template(f"btcli wallet overview --wallet.name {WALLET_NAME}  --subtensor.network local")
 
 
 unstake_token_command = Template(
-    f"btcli stake remove --wallet.name {WALLET_NAME} --wallet.hotkey $wallet_hotkey --max_stake {MAX_STAKE} --subtensor.network local --subtensor.chain_endpoint {SUBTENSOR_ENDPOINT}"
+    f"btcli stake remove --wallet.name {WALLET_NAME} --wallet.hotkey $wallet_hotkey --max_stake {MAX_STAKE} --subtensor.network local"
 )
 
 
