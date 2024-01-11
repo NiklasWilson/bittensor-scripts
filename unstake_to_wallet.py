@@ -14,7 +14,7 @@ initial_amount_staked = wallet["staked_tao"]
 initial_wallet_balance = wallet["wallet_balance"]
 
 final_amount_staked = 0.0
-final_wallet_balanace = 0.0
+final_wallet_balance = 0.0
 
 while STAKE_LEFT:
     STAKE_LEFT = False
@@ -27,18 +27,19 @@ while STAKE_LEFT:
             utils.unstake_tokens(miner["HOTKEY"])
             STAKE_LEFT = True
 
+    print(f"*** Getting wallet - {STAKE_LEFT=}")
     wallet = utils.get_wallet()
 
 final_amount_staked = wallet["staked_tao"]
 final_wallet_balance = wallet["wallet_balance"]
 
 print(
-    f"{initial_amount_staked=}, {initial_wallet_balance=}, {final_amount_staked=}, {final_wallet_balanace=}"
+    f"{initial_amount_staked=}, {initial_wallet_balance=}, {final_amount_staked=}, {final_wallet_balance=}"
 )
 print(f"amount staked delta={initial_amount_staked-final_amount_staked}")
-print(f"wallet_balance delta={final_wallet_balanace-initial_wallet_balance}")
+print(f"wallet_balance delta={final_wallet_balance-initial_wallet_balance}")
 
-tao_earned = (final_wallet_balanace + final_amount_staked) - (
+tao_earned = (final_wallet_balance + final_amount_staked) - (
     initial_amount_staked + initial_wallet_balance
 )
 print(f"tao_earned = {tao_earned}")
