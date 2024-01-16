@@ -23,7 +23,7 @@ def get_subnets(excludeLowEmission=False):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--wallets", type=str, nargs="+", required=True, help="Example mtllc01:5CK1u3qe6ZCHgpcCvGYf2H4acrZBAPam7extoxE6ntk7mymi")
+    parser.add_argument("--wallets", type=str, nargs="+", required=True, help="Example default:7BZ1u3qe6ZCHgpcCvZZf2H4acrZVAPam7extoxE6ntk7zasd")
     args = parser.parse_args()
 
     walletNames = []; walletColdkeys = []
