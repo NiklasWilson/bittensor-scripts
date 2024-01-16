@@ -26,11 +26,14 @@ email_recipients = json.loads(os.getenv("EMAIL_RECIPIENTS"))
 email_password = os.getenv("EMAIL_PASSWORD")
 WALLET_NAME = os.getenv("WALLET_NAME")
 WALLET_PASSWORD = os.getenv("WALLET_PASSWORD")
-SUBTENSOR_ENDPOINT = "ws://209.137.198.70:9944"  # TOOD: Move to .env
+#SUBTENSOR_ENDPOINT = os.getenv("SUBTENSOR_ENDPOINT")
+MAX_STAKE = os.getenv("MAX_STAKE") or 1.0
 
-wallet_overview_command = Template(f"btcli wallet overview --wallet.name {WALLET_NAME}")
+wallet_overview_command = Template(f"btcli wallet overview --wallet.name {WALLET_NAME}  --subtensor.network local")
+
+
 unstake_token_command = Template(
-    f"btcli stake remove --wallet.name $wallet_name --wallet.hotkey $wallet_hotkey --max_stake $max_stake --subtensor.network local --subtensor.chain_endpoint {SUBTENSOR_ENDPOINT}"
+    f"btcli stake remove --wallet.name $wallet_name --wallet.hotkey $wallet_hotkey --max_stake $max_stake --subtensor.network local"
 )
 
 
@@ -91,8 +94,11 @@ def get_wallet() -> dict | None:
         >>> wallet = utils.get_wallet("MyWallet", "password")
     """
 
-    command = f"stty cols 180 && btcli w overview --wallet.name {WALLET_NAME}"
+    #command = f"stty cols 180 && btcli w overview --wallet.name {WALLET_NAME} "
 
+    command = wallet_overview_command.substitute(WALLET_NAME=WALLET_NAME)
+    print (f"{command=}")
+    
     wallet = {"miners": []}
 
     try:
@@ -186,7 +192,7 @@ def safe_float(s):
         return None
 
 
-def unstake_tokens(wallet_hotkey: str, max_stake=1, wallet_name=WALLET_NAME) -> bool:
+def unstake_tokens(wallet_hotkey: str, max_stake=MAX_STAKE, wallet_name=WALLET_NAME) -> bool:
     command = unstake_token_command.substitute(wallet_hotkey=wallet_hotkey, max_stake=max_stake, wallet_name=wallet_name)
 
     try:
