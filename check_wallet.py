@@ -25,8 +25,8 @@ def is_integer(n):
         return False
 
 
-def get_wallet_data():
-    command = f"btcli w overview --wallet.name {WALLET_NAME}"
+def get_wallet_data(walletName=WALLET_NAME):
+    command = f"btcli w overview --wallet.name {walletName}"
 
     output = None
 
@@ -71,7 +71,17 @@ def get_wallet_data():
 
         header = [x.strip() for x in lines[header_line].split()]
 
-        for line in lines[data_line:-2]:
+        subnet=-1
+        foundWallet=False
+        for line in lines[:-2]:
+            if not foundWallet:
+                if "Wallet" in line:
+                    foundWallet=True
+                continue
+            if "Subnet" in line:
+                subnet = int(line.split(":")[1].strip())
+                continue
+
             parts = re.split(r"\s+", line.strip())
 
             if len(parts) > 2:
@@ -99,6 +109,7 @@ def get_wallet_data():
                         header[10]: parts[10],
                         header[11]: parts[11],
                         header[12]: parts[12],
+                        "SUBNET": subnet
                     }
                     print(subnet_info)
                     subnet_data.append(subnet_info)

@@ -30,7 +30,7 @@ SUBTENSOR_ENDPOINT = "ws://209.137.198.70:9944"  # TOOD: Move to .env
 
 wallet_overview_command = Template(f"btcli wallet overview --wallet.name {WALLET_NAME}")
 unstake_token_command = Template(
-    f"btcli stake remove --wallet.name {WALLET_NAME} --wallet.hotkey $wallet_hotkey --max_stake 1 --subtensor.network local --subtensor.chain_endpoint {SUBTENSOR_ENDPOINT}"
+    f"btcli stake remove --wallet.name $wallet_name --wallet.hotkey $wallet_hotkey --max_stake $max_stake --subtensor.network local --subtensor.chain_endpoint {SUBTENSOR_ENDPOINT}"
 )
 
 
@@ -128,6 +128,7 @@ def get_wallet() -> dict | None:
             subnet = parts[1]
 
         # miner line
+        # Improve this to not be hardcoded for one wallet
         if parts[0] == "8thtry":
             miner = {
                 "SUBNET": int(subnet),
@@ -185,8 +186,8 @@ def safe_float(s):
         return None
 
 
-def unstake_tokens(wallet_hotkey: str) -> bool:
-    command = unstake_token_command.substitute(wallet_hotkey=wallet_hotkey)
+def unstake_tokens(wallet_hotkey: str, max_stake=1, wallet_name=WALLET_NAME) -> bool:
+    command = unstake_token_command.substitute(wallet_hotkey=wallet_hotkey, max_stake=max_stake, wallet_name=wallet_name)
 
     try:
         print(f"running {command=}")
