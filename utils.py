@@ -6,7 +6,7 @@ import datetime
 import os
 import json
 import subprocess
-import subprocess
+from logging_config import logging
 
 # import subprocess
 import pexpect
@@ -26,14 +26,15 @@ email_recipients = json.loads(os.getenv("EMAIL_RECIPIENTS"))
 email_password = os.getenv("EMAIL_PASSWORD")
 WALLET_NAME = os.getenv("WALLET_NAME")
 WALLET_PASSWORD = os.getenv("WALLET_PASSWORD")
-#SUBTENSOR_ENDPOINT = os.getenv("SUBTENSOR_ENDPOINT")
-MAX_STAKE = os.getenv("MAX_STAKE") or 1.0
+# SUBTENSOR_ENDPOINT = os.getenv("SUBTENSOR_ENDPOINT")
 
-wallet_overview_command = Template(f"btcli wallet overview --wallet.name {WALLET_NAME}  --subtensor.network local")
+wallet_overview_command = Template(
+    f"btcli wallet overview --wallet.name {WALLET_NAME}  --subtensor.network local"
+)
 
 
 unstake_token_command = Template(
-    f"btcli stake remove --wallet.name {WALLET_NAME} --wallet.hotkey $wallet_hotkey --max_stake {MAX_STAKE} --subtensor.network local"
+    f"btcli stake remove --wallet.name {WALLET_NAME} --wallet.hotkey $wallet_hotkey --max_stake $max_stake --subtensor.network local"
 )
 
 
@@ -63,7 +64,7 @@ def send_email(subject: str, body: str) -> bool:
         smtp_server.login(email_sender, email_password)
         smtp_server.sendmail(email_sender, email_recipients, msg.as_string())
 
-    print(f"{datetime.datetime.now()} Message sent!")
+    logging.info(f"{datetime.datetime.now()} Message sent!")
 
     return True
 
@@ -94,11 +95,11 @@ def get_wallet() -> dict | None:
         >>> wallet = utils.get_wallet("MyWallet", "password")
     """
 
-    #command = f"stty cols 180 && btcli w overview --wallet.name {WALLET_NAME} "
+    # command = f"stty cols 180 && btcli w overview --wallet.name {WALLET_NAME} "
 
     command = wallet_overview_command.substitute(WALLET_NAME=WALLET_NAME)
-    print (f"{command=}")
-    
+    logging.info(f"{command=}")
+
     wallet = {"miners": []}
 
     try:
@@ -191,11 +192,13 @@ def safe_float(s):
         return None
 
 
-def unstake_tokens(wallet_hotkey: str) -> bool:
-    command = unstake_token_command.substitute(wallet_hotkey=wallet_hotkey)
+def unstake_tokens(wallet_hotkey: str, max_stake: float) -> bool:
+    command = unstake_token_command.substitute(
+        wallet_hotkey=wallet_hotkey, max_stake=max_stake
+    )
 
     try:
-        print(f"running {command=}")
+        logging.info(f"***** running {command=}")
         # Start the process
         child = pexpect.spawn(command)
 
@@ -311,16 +314,17 @@ def generate_html(data, staked_tao, wallet_balance):
 
     return html
 
-def generate_keys(wallet:str, netuid: int):
+
+def generate_keys(wallet: str, netuid: int):
     """
     Prints the iteration numbers from 00 to 99, each prepended by the given netuid.
     Each iteration number is zero-padded to ensure it is always two characters.
-    
+
     :param netuid: The netuid to prepend to each iteration number.
     """
     for i in range(100):
         # Format the iteration number with zero-padding to two digits and prepend the netuid
-        command = f"btcli w new_hotkey --wallet.name {WALLET_NAME} --wallet.hotkey miner{netuid}{i:02d}"
+        command = f"btcli w new_hotkey --subtensor.network local --wallet.name {WALLET_NAME} --wallet.hotkey miner{netuid}{i:02d}"
         print(f"registering: mminer{netuid}{i:02d}, command: {command}")
         try:
             output = subprocess.check_output(
@@ -330,7 +334,6 @@ def generate_keys(wallet:str, netuid: int):
             print(output)
         except subprocess.CalledProcessError as e:
             print(f"Error: {e}")
-        
 
 
 # # get wallet into json
