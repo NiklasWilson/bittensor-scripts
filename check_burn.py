@@ -1,8 +1,6 @@
 import re
-import json
 import subprocess
 import utils
-import time
 import datetime
 
 BURN_THRESHOLD = 13
@@ -101,8 +99,8 @@ if __name__ == "__main__":
     # Create a datetime object for January 1, 1970, 00:00:00
     stored_time = datetime.datetime(1970, 1, 1, 0, 0, 0)
 
-    #netuids to watch
-    netuids=[4,5]
+    # netuids to watch
+    netuids = [4, 5]
 
     while True:
         subnets_data = get_subnets_data()
@@ -126,4 +124,3 @@ if __name__ == "__main__":
 
                             # update the stored time
                             stored_time = current_time
-                        

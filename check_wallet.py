@@ -1,8 +1,6 @@
 import re
-import json
 import subprocess
 import utils
-import time
 import datetime
 import os
 from dotenv import load_dotenv
@@ -14,6 +12,7 @@ load_dotenv()
 # Access the variables from the .env file
 WALLET_NAME = os.getenv("WALLET_NAME")
 RANK_THRESHOLD = 0.00350
+
 
 def is_integer(n):
     try:
@@ -40,17 +39,17 @@ def get_wallet_data(walletName=WALLET_NAME):
         print(f"Error: {e}")
 
     # data = """
-    # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓                                                                                      
-    # ┃ 🥩 alert!                                                                                                        ┃                                                                                      
-    # ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩                                                                                      
-    # │ Found τ273.754804518 stake with coldkey 5GCcbhago4FM6VQQqqMzjfHLHEfhHhjv5GVnDUMnVLUn1F8i that is not registered. │                                                                                      
-    # └──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘                                                                                      
-    #                                                                      Wallet - team42:5GCcbhago4FM6VQQqqMzjfHLHEfhHhjv5GVnDUMnVLUn1F8i                                                                     
-    # Subnet: 5                                                                                                                                                                                                 
-    # COLDKEY  HOTKEY    UID  ACTIVE   STAKE(τ)     RANK    TRUST  CONSENSUS  INCENTIVE  DIVIDENDS  EMISSION(ρ)   VTRUST  VPERMIT  UPDATED  AXON                HOTKEY_SS58                                     
+    # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    # ┃ 🥩 alert 
+    # ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+    # │ Found τ273.754804518 stake with coldkey 5GCcbhago4FM6VQQqqMzjfHLHEfhHhjv5GVnDUMnVLUn1F8i that is not registered. │
+    # └──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+    #                                                                      Wallet - team42:5GCcbhago4FM6VQQqqMzjfHLHEfhHhjv5GVnDUMnVLUn1F8i
+    # Subnet: 5
+    # COLDKEY  HOTKEY    UID  ACTIVE   STAKE(τ)     RANK    TRUST  CONSENSUS  INCENTIVE  DIVIDENDS  EMISSION(ρ)   VTRUST  VPERMIT  UPDATED  AXON                HOTKEY_SS58
     # team42   miner501  219    True   19.35835  0.00035  0.20877    0.00050    0.00035    0.00000       33_559  0.00000                71  64.247.206.91:3501  5E7eREyX4fxm1JN6N85795d55UC5TXcmkjzMbFFcgLDYkPYj
-    # 1        1         1            τ19.35835  0.00035  0.20877    0.00050    0.00035    0.00000      ρ33_559  0.00000                                                                                        
-    #                                                                                       Wallet balance: τ50.336368994    
+    # 1        1         1            τ19.35835  0.00035  0.20877    0.00050    0.00035    0.00000      ρ33_559  0.00000
+    #                                                                                       Wallet balance: τ50.336368994
     # """
 
     subnet_data = []
@@ -101,7 +100,7 @@ def get_wallet_data(walletName=WALLET_NAME):
                         header[2]: parts[2],
                         header[3]: parts[3],
                         header[4]: parts[4],
-                        header[5]: parts[5], 
+                        header[5]: parts[5],
                         header[6]: parts[6],
                         header[7]: parts[7],
                         header[8]: parts[8],
@@ -123,11 +122,11 @@ if __name__ == "__main__":
     while True:
         wallet_data = get_wallet_data()
 
-        #warn if any of the INCENTIVE < 350
+        # warn if any of the INCENTIVE < 350
 
         if wallet_data:
             for item in wallet_data:
-                print (f"Comparing rank: {item['RANK']} to threshold {RANK_THRESHOLD} ")
+                print(f"Comparing rank: {item['RANK']} to threshold {RANK_THRESHOLD} ")
                 if float(item["RANK"]) < RANK_THRESHOLD:
                     # Get the current time again
                     current_time = datetime.datetime.now()
@@ -151,8 +150,7 @@ if __name__ == "__main__":
                         # update the stored time
                         stored_time = current_time
 
-        #TODO: Account for error "Error: {'code': -32000, 'message': 'Client error: Execution failed: failed to instantiate a new WASM module instance: maximum concurrent instance limit of 32 reached'}"
-        
+        # TODO: Account for error "Error: {'code': -32000, 'message': 'Client error: Execution failed: failed to instantiate a new WASM module instance: maximum concurrent instance limit of 32 reached'}"
 
         # if subnets_data:
         #     for item in subnets_data:

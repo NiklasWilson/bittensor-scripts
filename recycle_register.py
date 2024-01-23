@@ -1,18 +1,15 @@
 import pexpect
-import re
 import sys
 import argparse
 import os
 from dotenv import load_dotenv
-import utils
 import random
+import json
 
 # Load the environment variables from the .env file
 load_dotenv()
 
-WALLET_NAME = os.getenv("WALLET_NAME")
-WALLET_PASSWORD = os.getenv("WALLET_PASSWORD")
-
+wallets = json.loads(os.getenv("WALLETS"))
 
 # Function to safely convert string to float
 def safe_float(s):
@@ -21,13 +18,15 @@ def safe_float(s):
     except ValueError:
         return None
 
+
 # Set the standard output encoding to UTF-8.
 # This will ensure that print can handle the non-ASCII characters.
-sys.stdout.reconfigure(encoding='utf-8')
+sys.stdout.reconfigure(encoding="utf-8")
 
-def recycle_register(wallet_name, threshold, hotkey,netuid):
+
+def recycle_register(wallet_name, wallet_password, threshold, hotkey, netuid):
     # Command to run
-    command = f'btcli s register --wallet.name {wallet_name} --wallet.hotkey {hotkey} --netuid {netuid} --subtensor.network finney'
+    command = f"btcli s register --wallet.name {wallet_name} --wallet.hotkey {hotkey} --netuid {netuid} --subtensor.network local"
 
     # Start the process
     child = pexpect.spawn(command)
@@ -36,33 +35,37 @@ def recycle_register(wallet_name, threshold, hotkey,netuid):
     child.logfile_read = sys.stdout.buffer
 
     # Expect balance and cost information
-    child.expect(r"Your balance is: .*?(\d+\.\d+).*The cost to register by recycle is .*?(\d+\.\d+)", timeout=120)
-    
+    child.expect(
+        r"Your balance is: .*?(\d+\.\d+).*The cost to register by recycle is .*?(\d+\.\d+)",
+        timeout=120,
+    )
+
     # # Extract the floating point number
     current_wallet = safe_float(child.match.group(1).decode("utf-8"))
 
-    
-    #child.expect(r"The cost to register by recycle is .(\d+\.\d+)", timeout=120) 
+    # child.expect(r"The cost to register by recycle is .(\d+\.\d+)", timeout=120)
 
     # Extract the floating point number
     current_burn = safe_float(child.match.group(2).decode("utf-8"))
-    # Expecting the confirmation prompt    
+    # Expecting the confirmation prompt
     child.expect(r"Do you want to continue.*", timeout=15)
 
-    #"Do you want to continue\? \[y/n\] \(n\):"
+    # "Do you want to continue\? \[y/n\] \(n\):"
 
     # Decision based on current_burn
     if current_burn < threshold and current_burn < current_wallet:
         child.sendline("y")
     else:
         child.sendline("n")
-        print (f"\ncurrent_burn: {current_burn}  > threshold: {threshold} exceeded, or current_burn: {current_burn} > current_wallet: {current_wallet}")
+        print(
+            f"\ncurrent_burn: {current_burn}  > threshold: {threshold} exceeded, or current_burn: {current_burn} > current_wallet: {current_wallet}"
+        )
         child.close()
         return
 
     # # Expecting password prompt
     child.expect(r"Enter password to unlock key.*", timeout=120)
-    child.sendline(WALLET_PASSWORD)  # Sending password
+    child.sendline(wallet_password)  # Sending password
 
     # # Expect recycle confirmation with cost
     recycle_regex = r"Recycle .*(\d+\.\d+) to register on subnet:.*"
@@ -70,19 +73,19 @@ def recycle_register(wallet_name, threshold, hotkey,netuid):
 
     # # Extract the number and make decision
     recycle_cost = safe_float(child.match.group(1).decode("utf-8"))
-    print (f"recycle_cost: {recycle_cost}")
+    print(f"recycle_cost: {recycle_cost}")
 
     if recycle_cost is not None and recycle_cost < threshold:
         child.sendline("y")
         subject = "Token Purchased"
         body = f"NetUID: {netuid}, hotkey: {hotkey}, recycle_cost: {recycle_cost}"
 
-        utils.send_email(subject, body)
+        # utils.send_email(subject, body)
     else:
-        print (f"recycle_cost: {recycle_cost} > threshold {threshold}")
+        print(f"recycle_cost: {recycle_cost} > threshold {threshold}")
         child.sendline("n")
 
-    #child.terminate(force=True)
+    # child.terminate(force=True)
     # # You might want to add additional code to handle the output or result of the command.
     # # Also, consider error handling for unexpected output or errors in the command execution.
 
@@ -94,6 +97,7 @@ def recycle_register(wallet_name, threshold, hotkey,netuid):
     child.close()
     return
 
+
 def generate_random_miner(netuid):
     # Generate a random number between 0 and 99
     number = random.randint(0, 99)
@@ -103,27 +107,51 @@ def generate_random_miner(netuid):
 
     return f"miner{netuid}{padded_number}"
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     # Create an ArgumentParser object
-    parser = argparse.ArgumentParser(description="A script to accept additional options.")
+    parser = argparse.ArgumentParser(
+        description="A script to accept additional options."
+    )
 
     # Add arguments to the parser
-    parser.add_argument('--netuid', type=int, required=True, help='An integer representing the NetUID.')
-    parser.add_argument('--threshold', type=float, required=True, help='A string representing the wallet name.')
-    parser.add_argument('--hotkey', type=str, required=False, help='A string representing the wallet name.')
+    parser.add_argument(
+        "--netuid", type=int, required=True, help="An integer representing the NetUID."
+    )
+    parser.add_argument(
+        "--wallet_name",
+        type=str,
+        required=True,
+        help="A string representing the wallet name.",
+    )
+    parser.add_argument(
+        "--threshold",
+        type=float,
+        required=True,
+        help="A float for the threshold.",
+    )
+    parser.add_argument(
+        "--hotkey",
+        type=str,
+        required=False,
+        help="A string for the hotkey name.",
+    )
 
     # Parse the arguments from the command line
     args = parser.parse_args()
 
-    hotkey=args.hotkey
-    netuid=args.netuid
-    threshold=args.threshold
-
+    hotkey = args.hotkey
+    netuid = args.netuid
+    threshold = args.threshold
+    wallet_name = args.wallet_name
+    wallet_password = wallets[wallet_name]
+    
     while True:
         if not args.hotkey:
             hotkey = generate_random_miner(netuid)
         try:
-            recycle_register(WALLET_NAME, threshold, hotkey, netuid)
+            recycle_register(wallet_name, wallet_password, threshold, hotkey, netuid)
         except Exception as e:
-            print (f"Exception trying to register {hotkey} on netuid: {netuid} - {str(e)}")
+            print(
+                f"Exception trying to register {hotkey} on netuid: {netuid} - {str(e)}"
+            )
